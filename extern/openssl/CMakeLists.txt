@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 2.8.0)
 project(openssl)
 
 # Download information for OpenSSL
-set(OPENSSL_VERSION 1.0.1g)
-set(OPENSSL_SHA1    9ef09e97dfc9f14ac2c042f3b7e301098794fc0f)
+set(OPENSSL_VERSION 1.0.1l)
+set(OPENSSL_SHA1    b83ceba7d51e846cf24433aa3c417bfd62b3ffa5)
 
 #############################################################
 # DOWNLOAD BOOTSTRAP 
@@ -65,10 +65,16 @@ endforeach()
 include(ExternalProject)
 
 # Make sure we have perl installed
-find_package(Perl)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
+   set(PERL_EXECUTABLE "/usr/bin/perl")
+   set(PERL_FOUND TRUE) 
+else ()
+   find_package(Perl)
+endif () 
 if(NOT PERL_FOUND)
     message( FATAL_ERROR "OpenSSL requires perl for building. On windows try ActivePerl (http://www.activestate.com/activeperl)" )
 endif()
+MESSAGE("PERL_FOUND: ${PERL_FOUND} ${PERL_EXECUTABLE}")
 
 # Setup directories
 set( OPENSSL_SRC_DIR ${ARCHIVE_DIR})
@@ -169,7 +175,7 @@ elseif(UNIX)
         ${OPENSSL_BIN_DIR}/lib/libssl${OPENSSL_LIB_SUFFIX}
         ${OPENSSL_BIN_DIR}/lib/libcrypto${OPENSSL_LIB_SUFFIX}
         PARENT_SCOPE)
-
+    message("TARGET_ARCH ${TARGET_ARCH}")
     if (${TARGET_ARCH} STREQUAL "x86_64")
         # 64-bit MacOSX, Any Compiler
         set( OPENSSL_TARGET "linux-x86_64" )
@@ -246,6 +252,9 @@ else()
 
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+   set( OPENSSL_CONFIG_ARGS "no-ssl2" "no-mdc2" "no-hw" "no-shared" "no-engine" "zlib" "no-cms" "no-sctp" "no-deprecated" "no-gmp" "no-capieng"  "no-md2" "no-idea" "no-cast" "no-camellia" "no-seed" )
+endif()
 
 # Configure is an intermediate step
 message( STATUS "Building OpenSSL for ${OPENSSL_TARGET} (${TARGET_ARCH})")
