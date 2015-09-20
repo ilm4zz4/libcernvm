@@ -3,14 +3,18 @@ cmake_minimum_required (VERSION 2.8)
 # Which hypervisors to enable
 set( HV_NAMES Virtualbox )
 
-# Guess system architecture
-set(GUESS_ARCH "i386") 							# 1) Fallback to x86
-if(CMAKE_SYSTEM_PROCESSOR) 						# 2) Build on the same processor
-	set(GUESS_ARCH ${CMAKE_SYSTEM_PROCESSOR})
-	if(${GUESS_ARCH} STREQUAL "AMD64")
-		# We don't do any differentiation for AMD64 instruction set
-		set(GUESS_ARCH "x86_64")
-	endif()
+# Get system architecture
+set(uname_cmd "uname")
+set(uname_args "-m") 
+set(tr_cmd "tr")
+set(tr_arg "-d" "\n" "")
+message(STATUS "uname cmd: ${uname_cmd}")
+execute_process(COMMAND ${uname_cmd} ${uname_args} COMMAND ${tr_cmd} ${tr_arg}
+  RESULT_VARIABLE uname_res
+  OUTPUT_VARIABLE GUESS_ARCH)
+
+if(${GUESS_ARCH} STREQUAL "i686")
+  set(GUESS_ARCH "i386")
 endif()
 if(CMAKE_OSX_ARCHITECTURES)						# 3) Lookup on OSX Architectures
 	set(GUESS_ARCH ${CMAKE_OSX_ARCHITECTURES})
@@ -32,6 +36,16 @@ option(COVERITY_RUN "Set to ON when running this application with coverity" OFF)
 
 set(TARGET_ARCH "${GUESS_ARCH}" CACHE STRING "Override the identified target architecture (x86_64 or i386)" )
 set(BUILD_ID "" CACHE STRING "A build ID which is used to address different library configuration")
+
+set(BUILD_ID "" CACHE STRING "A build ID which is used to address different library configuration")
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+   set(HAVE_GLIBC_STRERROR_R "" CACHE STRING "Can't run curl into host")
+   set(HAVE_GLIBC_STRERROR_R__TRYRUN_OUTPUT "" CACHE STRING "Can't run curl into host")
+   set(HAVE_POSIX_STRERROR_R "" CACHE STRING "Can't run curl into host")
+   set(HAVE_POSIX_STRERROR_R__TRYRUN_OUTPUT "" CACHE STRING "Can't run curl into host")
+   set(HAVE_POLL_FINE "" CACHE STRING "Can't run curl into host")
+   set(HAVE_POLL_FINE__TRYRUN_OUTPUT "" CACHE STRING "Can't run curl into host")
+endif()
 
 # Validation banner
 message(STATUS "Building libcernvm for arch: ${TARGET_ARCH}")
