@@ -65,7 +65,7 @@ endforeach()
 include(ExternalProject)
 
 # Make sure we have perl installed
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
+if(ANDROID)
    set(PERL_EXECUTABLE "/usr/bin/perl")
    set(PERL_FOUND TRUE) 
 else ()
@@ -252,7 +252,7 @@ else()
 
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+if(ANDROID)
    set( OPENSSL_CONFIG_ARGS "no-ssl2" "no-mdc2" "no-hw" "no-shared" "no-engine" "zlib" "no-cms" "no-sctp" "no-deprecated" "no-gmp" "no-capieng"  "no-md2" "no-idea" "no-cast" "no-camellia" "no-seed" )
 endif()
 

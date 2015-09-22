@@ -38,9 +38,9 @@ set(TARGET_ARCH "${GUESS_ARCH}" CACHE STRING "Override the identified target arc
 set(BUILD_ID "" CACHE STRING "A build ID which is used to address different library configuration")
 
 set(BUILD_ID "" CACHE STRING "A build ID which is used to address different library configuration")
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-   set(HAVE_GLIBC_STRERROR_R "" CACHE STRING "Can't run curl into host")
-   set(HAVE_GLIBC_STRERROR_R__TRYRUN_OUTPUT "" CACHE STRING "Can't run curl into host")
+if(ANDROID_NDK)
+   set(HAVE_GLIBC_STRERROR_R "FAIL" CACHE STRING "Can't run curl into host")
+   set(HAVE_GLIBC_STRERROR_R__TRYRUN_OUTPUT "FAIL" CACHE STRING "Can't run curl into host")
    set(HAVE_POSIX_STRERROR_R "" CACHE STRING "Can't run curl into host")
    set(HAVE_POSIX_STRERROR_R__TRYRUN_OUTPUT "" CACHE STRING "Can't run curl into host")
    set(HAVE_POLL_FINE "" CACHE STRING "Can't run curl into host")
